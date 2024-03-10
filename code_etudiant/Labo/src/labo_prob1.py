@@ -34,7 +34,7 @@ class LaboProb1(ParsingClass1):
         Returns :
             (long) : La valeur de (n!)
         """
-        if n >= self.args.fact_end:
+        if n >= self.args.fact_end and n != 0:
             fact = n * self.factorielle(n - 1)
             return fact
         return 1
@@ -63,12 +63,12 @@ class LaboProb1(ParsingClass1):
         Returns :
             (void) : Aucune valeur de retour
         """
-        self.config: ConfigData = None
+        #self.config: ConfigData = None
         return
 
     def long_calcul(self) -> int:
         """Long calcul :
-            - Calcule val + (val-1) + (val-2) + ... + 1
+            - Calcule val + (val-1) + (val-2) + ...
             - val est tirée de l'objet lui-même (self.args.val)
 
         Args :
@@ -79,14 +79,14 @@ class LaboProb1(ParsingClass1):
         """
         a: int = self.args.val
         res = 0
-        while a > self.args.val_end:
+        while a <= self.args.val_end:
             res += a
             a -= self.args.val_end
         return res
 
     def compare_strings(self):
         """Comparaison de chaînes de caractères utf-8 :
-            - Deux chaînes de caractères sont d'apparence identique (lorsqu'on les utilise dans un print()),
+            - Deux chaînes de caractères sont apparence identiques (lorsqu'on les utilise dans un print()),
               mais leur comparaison indique qu'elles ne le sont pas
 
        Args :
@@ -96,7 +96,10 @@ class LaboProb1(ParsingClass1):
            (void) : Aucun résultat à retourner
        """
 
-        if self.word1 == self.word2:
+        s1 = LaboProb1.normalize_string(self.word1)
+        s2 = LaboProb1.normalize_string(self.word2)
+
+        if s1 == s2:
             print("Les chaînes de caractères \"", self.word1, "\" et \"", self.word2, "\" sont égales.", flush=True, sep="")
         else:
             print("Les chaînes de caractères \"", self.word1, "\" et \"", self.word2, "\" ne sont PAS égales!", flush=True, sep="")
@@ -117,7 +120,8 @@ class LaboProb1(ParsingClass1):
         a: int = 5
         b: int = 0
         c: str = str(b)
-        ma_liste = [0, 1, 2, 3]
+        y: int = 0
+        ma_liste = [0, 1, 2, 3, 4]
 
         if self.args.e is None:
             x = a / b
@@ -129,8 +133,9 @@ class LaboProb1(ParsingClass1):
             return
 
         try:
-            x = a / b
-            print(x)
+            if b !=0:
+                x = a / b
+                print(x)
         except AssertionError:
             print("Problème dans la division de a/b: a =", a, ", b =", b)
             self.print_debug_info()
@@ -142,14 +147,14 @@ class LaboProb1(ParsingClass1):
             self.print_debug_info()
 
         try:
-            print("y = ", a + c)
+            print("y = ", str(a) + c)
         except AssertionError:
             print("Erreur de type: impossible d'additionner un entier et une chaîne de caractères")
             self.print_debug_info()
 
         try:
-            print("Liste[5]", ma_liste[5])
-        except AssertionError:
+            print("Liste[4]", ma_liste[5])
+        except IndexError:
             print("Index trop grand")
             self.print_debug_info()
 
@@ -157,7 +162,7 @@ class LaboProb1(ParsingClass1):
         try:
             mon_fichier = open(filename, "r")
             print(mon_fichier.read())
-        except AssertionError:
+        except FileNotFoundError:
             print("Fichier", filename, "inexistant")
             self.print_debug_info()
         return
@@ -185,6 +190,7 @@ def main() -> None:
         (void) : Au retour, l'exécution est terminée
     """
     p1 = LaboProb1()
+    p1.args.p = 5
 
     match p1.args.p:
         case 1:

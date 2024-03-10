@@ -12,10 +12,6 @@
         - Redéfinition du produit scalaire entre deux vecteurs
         - Redéfinition de la méthode de calcul du cosinus de l'angle entre deux vecteurs
 
-    De plus, cet exercice touche aussi l'utilisation de :
-        - listes (non-immuable)
-        - d'autres structures apparentées aux listes, mais immuables (lesquelles ?)
-
   Copyright 2018-2024, Frédéric Mailhot et Université de Sherbrooke
 """
 
@@ -47,8 +43,7 @@ from typing import Any
 #
 #       2. De même, la classe LaboProb2 hérite de la classe LaboProb2Common.
 #       Ici encore, on redéfinit un certain nombre de méthodes :
-#           add_bigram_object(), add_bigram_other(), vector_size(), scalar_product(), cosine().
-#       3.
+#           add_bigram(), add_bigram_object(), add_bigram_other(), vector_size(), scalar_product(), cosine().
 
 
 class Bigram(BigramCommon):
@@ -74,7 +69,12 @@ class Bigram(BigramCommon):
         # Note: Il n'est pas nécessaire d'utiliser la méthode "isinstance".
         #       Elle est utilisée ici simplement pour démontrer qu'elle existe,
         #       et qu'on peut facilement vérifier si les classes de deux objets correspondent
-        return isinstance(other, self.__class__)
+
+        if self.word1 == other.word1 and self.word2 == other.word2:
+            return isinstance(other, self.__class__)
+        return False
+
+
 
     def __hash__(self) -> int:
         """Redéfinition de la méthode de hachage d'un bigramme :
@@ -90,7 +90,7 @@ class Bigram(BigramCommon):
         # Pour le moment, on n'utilise que le premier mot.
         # Vous devez changer ce qui est utilisé comme entrée dans la fonction de hachage.
         # Vous pourriez utiliser une combinaison des deux mots, avec un séparateur qui n'est pas une lettre.
-        return hash(self.word1)
+        return hash(self.word1 + self.word2)
 
 
 class LaboProb2(LaboProb2Common):
@@ -112,8 +112,13 @@ class LaboProb2(LaboProb2Common):
         # Ici, remplacez les prints par votre code.
         # Le tableau de hachage bigram_dict devrait accumuler et compter les bigrammes à mesure qu'on les ajoute.
         # On suppose qu'au départ, le tableau de hachage est vide
-        print(bigram)
-        print(bigram_dict)
+        if bigram not in bigram_dict:
+            bigram_dict[bigram] = 1
+        else:
+            bigram_dict[bigram] += 1
+
+        #print(bigram)
+        #print(bigram_dict)
         return
 
     @staticmethod  # Cette méthode est statique, parce qu'elle n'utilise aucune valeur de l'objet.
@@ -157,7 +162,8 @@ class LaboProb2(LaboProb2Common):
         print(word1)
         print(word2)
         print(bigram_dict)
-        LaboProb2.add_bigram(word1, bigram_dict)
+        bigram = Bigram(word1, word2)
+        LaboProb2.add_bigram(bigram, bigram_dict)
         return
 
     @staticmethod
@@ -175,7 +181,7 @@ class LaboProb2(LaboProb2Common):
         """
         # Ici, remplacez les prints par votre code.
         # Que pouvez-vous utiliser pour remplacer un vecteur, mais qui est immuable ?
-        bigram = [word1, word2]
+        bigram = (word1, word2)
         LaboProb2.add_bigram(bigram, bigram_dict)
         return
 
@@ -195,9 +201,8 @@ class LaboProb2(LaboProb2Common):
         # Cette somme de carrés représente le produit scalaire du vecteur avec lui-même
         # Ici, chaque bigramme distinct est une dimension
         # Remplacez les lignes suivantes par le code approprié.
-        size = 0
+        size = LaboProb2.scalar_product(vector, vector)
         size = math.sqrt(size)
-        size += LaboProb2.scalar_product(vector, vector)
         return size
 
     @staticmethod  # Cette méthode est statique, parce qu'elle n'utilise aucune valeur de l'objet.
@@ -217,8 +222,15 @@ class LaboProb2(LaboProb2Common):
         # Si un bigramme existe dans un seul des vecteurs, alors la projection est nulle dans l'autre,
         #   et en conséquence le produit pour cette dimension est nul.
         # Remplacez le print et les lignes suivantes par le code approprié.
-        print(vector1, vector2)
-        scal_prod = 1
+        #print(vector1, vector2)
+        #return sum((a*b) for a, b in zip(v1, v2))
+
+        scal_prod = 0
+
+
+        for i in range(len(vector1.values())):
+            scal_prod += (list(vector1.values())[i] * list(vector2.values())[i])
+
         return scal_prod
 
     @staticmethod  # Cette méthode est statique, parce qu'elle n'utilise aucune valeur de l'objet.
@@ -240,9 +252,11 @@ class LaboProb2(LaboProb2Common):
         # Remplacer le print et les lignes qui suivent par le code approprié.
         # Note: Assurez-vous que le résultat ne dépasse pas 1.0, sinon math.acos() causera une exception.
         # Remplacer les lignes qui suivent par le code approprié.
+        # print(vector1, vector2, LaboProb2.vector_size(vector1), LaboProb2.vector_size(vector2))
 
-        print(vector1, vector2, LaboProb2.vector_size(vector1), LaboProb2.vector_size(vector2))
-        angle_cos = 0.0
+        angle_cos = (LaboProb2.scalar_product(vector1, vector2) / (LaboProb2.vector_size(vector1) * LaboProb2.vector_size(vector2)))
+        if angle_cos > 1:
+            return 1
         return angle_cos
 
 
