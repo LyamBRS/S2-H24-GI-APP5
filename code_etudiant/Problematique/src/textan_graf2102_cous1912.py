@@ -376,6 +376,7 @@ class TextAn(TextAnCommon):
                 if not self.keep_ponc:
                     for char in self.PONC:
                         text = text.replace(char, ' ')
+                
                 text = text.split()
                 self.taille_mots[auteur] = 0
 
