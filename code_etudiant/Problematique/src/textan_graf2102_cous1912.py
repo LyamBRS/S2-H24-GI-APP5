@@ -79,24 +79,18 @@ class TextAn(TextAnCommon):
 
     @staticmethod
     def scalar_product(vector1: dict, vector2: dict) -> int:
-        """Méthode calculant le produit scalaire entre 2 vecteurs :
+        """
+            Méthode calculant le produit scalaire entre 2 vecteurs :
 
         Args :
-            vector1 (dict) : tableau de hachage contenant tous les bigrammes du premier fichier
-            vector2 (dict) : tableau de hachage contenant tous les bigrammes du deuxième fichier
+            vector1 (dict) : tableau de hachage contenant tous les ngrammes du premier fichier
+            vector2 (dict) : tableau de hachage contenant tous les ngrammes du deuxième fichier
 
         Returns :
             prod_scal (int) : Produit scalaire entre les deux vecteurs
-        """
-        # Ici, vous devez calculer le produit scalaire entre les deux vecteurs.
-        # Pour ce faire, vous devez multiplier les valeurs des projections dans chacune des dimensions.
-        # De nouveau, les dimensions correspondent aux bigrammes.
-        # Si un bigramme existe dans un seul des vecteurs, alors la projection est nulle dans l'autre,
-        #   et en conséquence le produit pour cette dimension est nul.
-        # Remplacez le print et les lignes suivantes par le code approprié.
-        # print(vector1, vector2)
-        # return sum((a*b) for a, b in zip(v1, v2))
-        if len(vector1) < len(vector2):  # Correction : choisir le vecteur avec le moins de dimensions
+        """s
+        # Il faut utiliser le plus petit vecteur a la bonne place, sinon produit matricielle impossible.
+        if len(vector1) < len(vector2):
             v1 = vector1
             v2 = vector2
         else:
@@ -104,6 +98,9 @@ class TextAn(TextAnCommon):
             v2 = vector1
 
         prod_scal = 0  # Correction : Calcul du produit des projections des dimensions communes
+
+        # Le produit scalaire des deux vecteurs est uniquement calculee pour les
+        # elements identiques des deux vecteurs. Sinon, c'est une multiplication par 0.
         for ngram in v1:
             if ngram in v2:
                 prod_scal += v1[ngram] * v2[ngram]
