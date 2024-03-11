@@ -22,6 +22,7 @@
     Copyright 2018-2023, F. Mailhot et Université de Sherbrooke
 """
 import math
+import os
 
 from textan_common import TextAnCommon
 
@@ -410,18 +411,24 @@ class TextAn(TextAnCommon):
 
         # faire les n-grames
 
+        # Get all authors and analyse their respective texts
         for auteur in self.auteurs:
-            print(auteur)
+            print(f"Analyse de l'auteur: {auteur}...")
+
+            # Analyses each texts available for that author
             for fileName in self.get_aut_files(auteur):
                 text = ""
+
+                # FILE OPENING
                 try:
                     file = open(fileName, 'r', encoding='utf-8')
                     text = file.read()
                     file.close()
 
                 except FileNotFoundError:
-                    print("File: " + fileName + " n'existe pas")
+                    print("\tFile: " + fileName + " n'existe pas")
 
+                # FILE NORMALIZING
                 text = text.lower()
                 if not self.keep_ponc:
                     for char in self.PONC:
@@ -429,6 +436,24 @@ class TextAn(TextAnCommon):
 
                 text = text.split()
                 self.taille_mots[auteur] = 0
+                new_text = text
+
+                if self.remove_word_1:
+                    new_text = [
+                        word
+                        for word in text
+                        if not (len(word) <= 1)
+                    ]
+                text = new_text
+
+                if self.remove_word_1:
+                    new_text = [
+                        word
+                        for word in text
+                        if not (len(word) <= 2)
+                    ]
+                text = new_text
+                print(f"\tAnalyse du text de {len(text)} mots: {os.path.basename(fileName)}...")
 
                 for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
                     if self.ngram == 1:
