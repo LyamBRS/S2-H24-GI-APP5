@@ -446,7 +446,21 @@ class TestTextAn(ParsingClassTextAn):
         Returns :
             (void) : Au retour, tous les cips sont inclus dans la liste self.cips
         """
+
+        # temporary fix to get etudiants.txt
+        import pathlib
+        path_to_this_py_file = pathlib.Path().resolve()
+        path_to_this_py_file = path_to_this_py_file.parent
+        path_to_this_py_file = str(path_to_this_py_file)
+
+        path_to_this_py_file = path_to_this_py_file + "\\data"
+        self.rep_code = path_to_this_py_file
+
+        print(path_to_this_py_file)
+        print(self.rep_code)
+
         cip_file = self.rep_code + "/etudiants.txt"
+        print(cip_file)
         cip_list = open(cip_file, "r")
         lines = cip_list.readlines()
         for line in lines:
