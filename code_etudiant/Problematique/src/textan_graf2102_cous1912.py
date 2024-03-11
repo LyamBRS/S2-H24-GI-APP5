@@ -209,8 +209,8 @@ class TextAn(TextAnCommon):
         except FileNotFoundError:
             print("File: " + oeuvre + " n'existe pas")
 
-        text = text.lower()
-        text = text.split()
+        text = self.uniformizer(text)
+
 
         for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
             if self.ngram == 1:
@@ -299,19 +299,12 @@ class TextAn(TextAnCommon):
         for s in current_ngram:
             generated_text.append(s)
 
-        # print(f"generated_text:{generated_text}")
-
         for i in range(taille - self.ngram):
-            # print(f"i:{i}, i+self.ngram: {i+self.ngram}, generated_text: {generated_text}")
             current_ngram = tuple(generated_text[i:i + self.ngram])
-            # print(f"current_ngram:{current_ngram}")
             suffix = prefix[current_ngram]
-            # print(f"suffix:{suffix}")
             populations = list(suffix.keys())
             weights = list(suffix.values())
             choice = random.choices(population=populations, weights=weights)[0]
-            # print(f"populations: {populations}, weights: {weights}")
-            # print(f"choice: {choice}")
             generated_text.append(choice)
 
         # Generate one string out of the parsed generated text
@@ -319,6 +312,12 @@ class TextAn(TextAnCommon):
         for word in generated_text:
             finalized_text = finalized_text + word + " "
         print(finalized_text)
+        try:
+            with open(textname, 'w', encoding='utf-8') as file:
+                file.write(finalized_text)
+            print("Content has been written to", textname)
+        except IOError:
+            print("Error: Could not write to file", textname)
         return
 
 
@@ -387,7 +386,7 @@ class TextAn(TextAnCommon):
             #    current_ngram = (val[0])
             #else:
             current_ngram = tuple(generated_text[i:i + self.ngram])
-            print(f"current_ngram:{current_ngram}")
+            #print(f"current_ngram:{current_ngram}")
             suffix = prefix[current_ngram]
             # print(f"suffix:{suffix}")
             populations = list(suffix.keys())
@@ -402,6 +401,14 @@ class TextAn(TextAnCommon):
         for word in generated_text:
             finalized_text = finalized_text + word + " "
         print(finalized_text)
+
+        try:
+            with open(textname, 'w', encoding='utf-8') as file:
+                file.write(finalized_text)
+            print("Content has been written to", textname)
+        except IOError:
+            print("Error: Could not write to file", textname)
+
         return
 
     def get_nth_element(self, auteur: str, n: int) -> [[str]]:
