@@ -50,7 +50,7 @@ class TextAn(TextAnCommon):
     """
 
     # Signes de ponctuation à retirer (compléter cette liste incomplète)
-    PONC = ["!", ".", "[", "]", "(", ")", ",", "?", "--", "...", ";"]
+    PONC = ["!", ".", "[", "]", "(", ")", ",", "?", "--", "...", ";", "\n" , "\r"]
 
     def __init__(self) -> None:
         """Initialize l'objet de type TextAn lorsqu'il est créé
