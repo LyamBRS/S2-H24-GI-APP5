@@ -48,7 +48,7 @@ class TextAn(TextAnCommon):
     """
 
     # Signes de ponctuation à retirer (compléter cette liste incomplète)
-    PONC = ["!", ".", "[", "]", "(", ")", ",", "?"]
+    PONC = ["!", ".", "[", "]", "(", ")", ",", "?", "--", "...", ]
 
     def __init__(self) -> None:
         """Initialize l'objet de type TextAn lorsqu'il est créé
@@ -270,7 +270,57 @@ class TextAn(TextAnCommon):
         Returns :
             void : ne retourne rien, le texte produit doit être écrit dans le fichier "textname"
         """
+        prefix = {}
+        print(auteur)
+        for fileName in self.get_aut_files(auteur):
+            text = ""
+            try:
+                file = open(fileName, 'r', encoding='utf-8')
+                text = file.read()
+                file.close()
 
+            except FileNotFoundError:
+                print("File: " + fileName + " n'existe pas")
+
+            text = text.lower()
+            if not self.keep_ponc:
+                for char in self.PONC:
+                    text = text.replace(char, ' ')
+
+            text = text.split()
+            self.taille_mots[auteur] = 0
+
+            for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
+                ngram_act = list(self.mots_auteurs[auteur].keys())[i]
+                ngram_next = list(self.mots_auteurs[auteur].keys())[i + 1]
+                prefix_temp = ngram_act[0] + "::" + ngram_act[1]
+                suffix = []
+
+                if self.ngram == 1:
+                    ngrams = (text[k])
+                else:
+                    ngrams = tuple(text[k:k + self.ngram])
+
+                if ngrams not in self.mots_auteurs[auteur]:
+                    self.mots_auteurs[auteur][ngrams] = 1
+                    self.taille_mots[auteur] += 1
+                else:
+                    self.mots_auteurs[auteur][ngrams] += 1
+
+
+
+        for i in range(len(self.mots_auteurs[auteur])):
+            # On met le ngram
+
+
+            if ngram_act not in prefix:
+                prefix[prefix_temp] = suffix
+                prefix[prefix_temp].append(ngram_next[1])
+
+            else:
+                prefix[prefix_temp].append(ngram_next[1])
+
+        print("ALLO")
         # Ce print ne sert qu'à éliminer un avertissement. Il doit être retiré lorsque le code est complété
         print(self.auteurs, auteur, taille, textname)
 
@@ -376,7 +426,7 @@ class TextAn(TextAnCommon):
                 if not self.keep_ponc:
                     for char in self.PONC:
                         text = text.replace(char, ' ')
-                
+
                 text = text.split()
                 self.taille_mots[auteur] = 0
 
