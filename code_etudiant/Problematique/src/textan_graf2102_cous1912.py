@@ -229,7 +229,8 @@ class TextAn(TextAnCommon):
         return liste_auteur
 
     def gen_text_all(self, taille: int, textname: str) -> None:
-        """Après analyse des textes d'auteurs connus, produire un texte selon des statistiques de l'ensemble des auteurs
+        """
+            Après analyse des textes d'auteurs connus, produire un texte selon des statistiques de l'ensemble des auteurs
 
         Args :
             taille (int) : Taille du texte à générer
@@ -254,6 +255,7 @@ class TextAn(TextAnCommon):
 
                 except FileNotFoundError:
                     print("File: " + fileName + " n'existe pas")
+                    return
 
                 text = self.uniformizer(text)
                 self.taille_mots[auteur] = 0
@@ -313,7 +315,6 @@ class TextAn(TextAnCommon):
             print("Error: Could not write to file", textname)
         return
 
-
     def gen_text_auteur(self, auteur: str, taille: int, textname: str) -> None:
         """Après analyse des textes d'auteurs connus, produire un texte selon des statistiques d'un auteur
 
@@ -326,7 +327,6 @@ class TextAn(TextAnCommon):
             void : ne retourne rien, le texte produit doit être écrit dans le fichier "textname"
         """
         prefix = {}
-        print(auteur)
         for fileName in self.get_aut_files(auteur):
             text = ""
             try:
@@ -336,6 +336,7 @@ class TextAn(TextAnCommon):
 
             except FileNotFoundError:
                 print("File: " + fileName + " n'existe pas")
+                return
 
             text = text.lower()
             if not self.keep_ponc:
@@ -347,20 +348,13 @@ class TextAn(TextAnCommon):
 
             for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
                 suffix = (text[k+self.ngram])
-
-                #if self.ngram == 1:
-                #    ngrams = (text[k])
-                #else:
                 ngrams = tuple(text[k:k + self.ngram])
-
-                # nngrams = hash(ngrams)
 
                 if ngrams not in prefix:
                     prefix[ngrams] = {}
 
                 if suffix not in prefix[ngrams]:
                     prefix[ngrams][suffix] = 1
-                    #print(f"ngram: {ngrams}, suffix: {suffix}, prefix: {prefix[ngrams]}, suffix: {prefix[ngrams][suffix]}")
                 else:
                     prefix[ngrams][suffix] += 1
 
@@ -372,21 +366,11 @@ class TextAn(TextAnCommon):
         # print(f"generated_text:{generated_text}")
 
         for i in range(taille-self.ngram):
-            # print(f"i:{i}, i+self.ngram: {i+self.ngram}, generated_text: {generated_text}")
-            #if self.ngram == 1:
-            #    val = generated_text[i]
-            #    val = val.split()
-            #    current_ngram = (val[0])
-            #else:
             current_ngram = tuple(generated_text[i:i + self.ngram])
-            #print(f"current_ngram:{current_ngram}")
             suffix = prefix[current_ngram]
-            # print(f"suffix:{suffix}")
             populations = list(suffix.keys())
             weights = list(suffix.values())
             choice = random.choices(population=populations, weights=weights)[0]
-            # print(f"populations: {populations}, weights: {weights}")
-            # print(f"choice: {choice}")
             generated_text.append(choice)
 
         # Generate one string out of the parsed generated text
