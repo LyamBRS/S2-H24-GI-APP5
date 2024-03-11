@@ -192,6 +192,7 @@ class TextAn(TextAnCommon):
         mots_oeuvre = {}
         text = ""
 
+        # Ouvrir le fichier donne
         try:
             file = open(oeuvre, 'r', encoding='utf-8')
             text = file.read()
@@ -199,10 +200,11 @@ class TextAn(TextAnCommon):
 
         except FileNotFoundError:
             print("File: " + oeuvre + " n'existe pas")
+            return []
 
         text = self.uniformizer(text)
 
-
+        # Analyse du text donnee, comme dans analyse
         for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
             if self.ngram == 1:
                 ngrams = (text[k])
@@ -214,26 +216,16 @@ class TextAn(TextAnCommon):
             else:
                 mots_oeuvre[ngrams] += 1
 
+        # Les resultats sont ajouter dans un tableau simple pour parse later
         for auteur in self.auteurs:
             liste_auteur.append((auteur, self.dot_product_dict_aut(mots_oeuvre, auteur)))
 
-        # Les lignes suivantes ne servent qu'à éliminer un avertissement.
-        # Il faut les retirer lorsque le code est complété
-        print(self.auteurs, oeuvre)
+        #print(self.auteurs, oeuvre)
         resultats = [
             ("Premier_auteur", 0.1234),
             ("Deuxième_auteur", 0.1123),
         ]  # Exemple du format des sorties
-
-        # Ajouter votre code pour déterminer la proximité du fichier passé en paramètre avec chacun des auteurs
-        # Retourner la liste des auteurs, chacun avec sa proximité au fichier inconnu
-        # Plus la proximité est grande, plus proche l'oeuvre inconnue est des autres écrits d'un auteur
-        #   Le produit scalaire entre le vecteur représentant les oeuvres d'un auteur
-        #       et celui associé au texte inconnu pourrait s'avérer intéressant...
-        #   Le produit scalaire devrait être normalisé avec la taille du vecteur associé au texte inconnu :
-        #   proximité = (A dot product B) / (|A| |B|)   où A est le vecteur du texte inconnu et B est celui d'un auteur,
-        #           "dot product" est le produit scalaire, et |X| est la norme (longueur) du vecteur X
-
+        
         return liste_auteur
 
     def gen_text_all(self, taille: int, textname: str) -> None:
