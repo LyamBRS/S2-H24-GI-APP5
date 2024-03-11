@@ -225,7 +225,7 @@ class TextAn(TextAnCommon):
             ("Premier_auteur", 0.1234),
             ("Deuxième_auteur", 0.1123),
         ]  # Exemple du format des sorties
-        
+
         return liste_auteur
 
     def gen_text_all(self, taille: int, textname: str) -> None:
