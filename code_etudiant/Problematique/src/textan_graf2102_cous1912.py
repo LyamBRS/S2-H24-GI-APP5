@@ -303,7 +303,14 @@ class TextAn(TextAnCommon):
         # Generate one string out of the parsed generated text, finally creating a readable text.
         finalized_text: str = ""
         for word in generated_text:
-            finalized_text = finalized_text + word + " "
+            if word in self.PONC:
+                if word != "--":
+                    finalized_text = finalized_text[:-1]
+                    finalized_text = finalized_text + word + " "
+                else:
+                    finalized_text = finalized_text + word
+            else:
+                finalized_text = finalized_text + word + " "
         #print(finalized_text)
 
         # Write that to a file with the specified name.
@@ -369,9 +376,16 @@ class TextAn(TextAnCommon):
             generated_text.append(choice)
 
         # Generate one string out of the parsed generated text
-        finalized_text:str = ""
+        finalized_text: str = ""
         for word in generated_text:
-            finalized_text = finalized_text + word + " "
+            if word in self.PONC:
+                if word != "--":
+                    finalized_text = finalized_text[:-1]
+                    finalized_text = finalized_text + word + " "
+                else:
+                    finalized_text = finalized_text + word
+            else:
+                finalized_text = finalized_text + word + " "
         #print(finalized_text)
 
         try:
