@@ -239,9 +239,14 @@ class TextAn(TextAnCommon):
             void : ne retourne rien, le texte produit doit être écrit dans le fichier "textname"
         """
         prefix = {}
+        generated_text = []
+
+        # Parcourir tout les texts de tous les auteurs
         for auteur in self.auteurs:
             for fileName in self.get_aut_files(auteur):
                 text = ""
+
+                # Open the file. Honestly, shouldve been a seperate function in this.
                 try:
                     file = open(fileName, 'r', encoding='utf-8')
                     text = file.read()
@@ -250,51 +255,56 @@ class TextAn(TextAnCommon):
                 except FileNotFoundError:
                     print("File: " + fileName + " n'existe pas")
 
-                text = text.lower()
-                if not self.keep_ponc:
-                    for char in self.PONC:
-                        text = text.replace(char, ' ')
-
-                text = text.split()
+                text = self.uniformizer(text)
                 self.taille_mots[auteur] = 0
 
+                # Parcourir le text par groupe de n grammes un mot a la fois.
                 for k in range(0, len(text) - self.ngram - 1):  # passe a travers le texte avec le n-gram
+
+                    # Quel mot suit la suite de ngramme dans le text? Bah, c'est ca le suffix.
                     suffix = (text[k + self.ngram])
 
-                    # if self.ngram == 1:
-                    #    ngrams = (text[k])
-                    # else:
+                    # Quel ngramme est associer avec ce suffix la?
                     ngrams = tuple(text[k:k + self.ngram])
 
-                    # nngrams = hash(ngrams)
-
+                    # Welp, le ngram trouve ye pas dans les prefix qu'on a parser avant.
                     if ngrams not in prefix:
                         prefix[ngrams] = {}
 
+                    # Le ngramme a pas ste suffix la dedans, fac on le cree pour plus tard.
                     if suffix not in prefix[ngrams]:
                         prefix[ngrams][suffix] = 1
-                        # print(f"ngram: {ngrams}, suffix: {suffix}, prefix: {prefix[ngrams]}, suffix: {prefix[ngrams][suffix]}")
+
+                    # Plus tard est arrive! Y'a donc plus de probabilitees que ce ngramme suive ce suffix la
                     else:
                         prefix[ngrams][suffix] += 1
 
-        generated_text = []
+        # This first word of the generated text will be selected randomly... Theres nothing to compare for suffix isnt there.
         current_ngram = random.choice(list(prefix.keys()))
         for s in current_ngram:
             generated_text.append(s)
 
+        # On ce deplace de 1 dans la liste en analysant toujours la fin du text.
+        # Le dernier ngramme dicte les suffixes a aller chercher.
+        # La reoccurance de chaque suffix est ensuite mis dans un random pour donner le plus plausible
+        # a ajouter a la fin du ngramme.
         for i in range(taille - self.ngram):
             current_ngram = tuple(generated_text[i:i + self.ngram])
             suffix = prefix[current_ngram]
+
             populations = list(suffix.keys())
             weights = list(suffix.values())
-            choice = random.choices(population=populations, weights=weights)[0]
+            choice = random.choices(population=populations, weights=weights)[0] #[0], c'est le text.
+
             generated_text.append(choice)
 
-        # Generate one string out of the parsed generated text
+        # Generate one string out of the parsed generated text, finally creating a readable text.
         finalized_text: str = ""
         for word in generated_text:
             finalized_text = finalized_text + word + " "
-        print(finalized_text)
+        #print(finalized_text)
+
+        # Write that to a file with the specified name.
         try:
             with open(textname, 'w', encoding='utf-8') as file:
                 file.write(finalized_text)
