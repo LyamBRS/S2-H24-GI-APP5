@@ -399,8 +399,6 @@ class TextAn(TextAnCommon):
             ngram (List[Liste[string]]) : Liste de liste de mots composant le n-gramme recherché
             (il est possible qu'il y ait plus d'un n-gramme au même rang)
         """
-        # Les lignes suivantes ne servent qu'à éliminer un avertissement.
-        # Il faut les retirer lorsque le code est complété
 
         liste_de_ngrammes = []
         reoccurance_index = 0
@@ -447,13 +445,30 @@ class TextAn(TextAnCommon):
 
     def uniformizer(self, text:str) -> dict:
         """
+            Uniformise le text donner (grosse string) en liste de mots, tout en enlevant
+            les mots de 1 ou 2 lettres (au besoin), la ponctuation (au besoin) ainsi que
+            les majuscules. Les ponctuation sont separe des mots aussi.
 
+        Args :
+            auteur (str) : Nom de l'auteur à utiliser
+            n (int) : Indice du n-gramme à retourner
+
+        Returns :
+            ngram (List[Liste[string]]) : Liste de liste de mots composant le n-gramme recherché
+            (il est possible qu'il y ait plus d'un n-gramme au même rang)
         """
         # FILE NORMALIZING
+
+        # Removing all capitalized letters.
         text = text.lower()
+
+        # Removing all ponctuation if necessary
         if not self.keep_ponc:
             for char in self.PONC:
                 text = text.replace(char, ' ')
+        else:
+            for char in self.PONC:
+                text = text.replace(char, ' ' + char + ' ')
 
         text = text.split()
 
