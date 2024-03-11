@@ -278,10 +278,10 @@ class TextAn(TextAnCommon):
                 for k in range(0, len(text) - self.ngram - 1):  # passe a travers le texte avec le n-gram
                     suffix = (text[k + self.ngram])
 
-                    if self.ngram == 1:
-                        ngrams = (text[k])
-                    else:
-                        ngrams = tuple(text[k:k + self.ngram])
+                    # if self.ngram == 1:
+                    #    ngrams = (text[k])
+                    # else:
+                    ngrams = tuple(text[k:k + self.ngram])
 
                     # nngrams = hash(ngrams)
 
@@ -356,10 +356,10 @@ class TextAn(TextAnCommon):
             for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
                 suffix = (text[k+self.ngram])
 
-                if self.ngram == 1:
-                    ngrams = (text[k])
-                else:
-                    ngrams = tuple(text[k:k + self.ngram])
+                #if self.ngram == 1:
+                #    ngrams = (text[k])
+                #else:
+                ngrams = tuple(text[k:k + self.ngram])
 
                 # nngrams = hash(ngrams)
 
@@ -381,8 +381,13 @@ class TextAn(TextAnCommon):
 
         for i in range(taille-self.ngram):
             # print(f"i:{i}, i+self.ngram: {i+self.ngram}, generated_text: {generated_text}")
-            current_ngram = tuple(generated_text[i:i+self.ngram])
-            # print(f"current_ngram:{current_ngram}")
+            #if self.ngram == 1:
+            #    val = generated_text[i]
+            #    val = val.split()
+            #    current_ngram = (val[0])
+            #else:
+            current_ngram = tuple(generated_text[i:i + self.ngram])
+            print(f"current_ngram:{current_ngram}")
             suffix = prefix[current_ngram]
             # print(f"suffix:{suffix}")
             populations = list(suffix.keys())
