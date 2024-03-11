@@ -306,6 +306,14 @@ class TextAn(TextAnCommon):
             finalized_text = finalized_text + word + " "
         #print(finalized_text)
 
+        # Remove spaces before ponctuations.
+        for ponctuation in self.PONC:
+            # The space after "--" needs to be removed, not before. Opposite for everything else.
+            if(ponctuation != "--"):
+                finalized_text.replace(" "+ponctuation, ponctuation)
+            else:
+                finalized_text.replace(ponctuation+" ", ponctuation)
+
         # Write that to a file with the specified name.
         try:
             with open(textname, 'w', encoding='utf-8') as file:
@@ -371,7 +379,15 @@ class TextAn(TextAnCommon):
         finalized_text:str = ""
         for word in generated_text:
             finalized_text = finalized_text + word + " "
-        print(finalized_text)
+        #print(finalized_text)
+
+        # Remove spaces before ponctuations.
+        for ponctuation in self.PONC:
+            # The space after "--" needs to be removed, not before. Opposite for everything else.
+            if(ponctuation != "--"):
+                finalized_text.replace(" "+ponctuation, ponctuation)
+            else:
+                finalized_text.replace(ponctuation+" ", ponctuation)
 
         try:
             with open(textname, 'w', encoding='utf-8') as file:
