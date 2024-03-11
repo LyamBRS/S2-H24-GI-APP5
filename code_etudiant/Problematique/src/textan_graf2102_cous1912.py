@@ -302,17 +302,14 @@ class TextAn(TextAnCommon):
                 else:
                     ngrams = tuple(text[k:k + self.ngram])
 
-                if ngrams not in self.mots_auteurs[auteur]:
-                    self.mots_auteurs[auteur][ngrams] = 1
+                if ngrams not in prefix:
+                    prefix[ngrams] = 1
                     self.taille_mots[auteur] += 1
                 else:
                     self.mots_auteurs[auteur][ngrams] += 1
 
-
-
         for i in range(len(self.mots_auteurs[auteur])):
             # On met le ngram
-
 
             if ngram_act not in prefix:
                 prefix[prefix_temp] = suffix
@@ -446,7 +443,7 @@ class TextAn(TextAnCommon):
                     ]
                 text = new_text
 
-                if self.remove_word_1:
+                if self.remove_word_2:
                     new_text = [
                         word
                         for word in text
