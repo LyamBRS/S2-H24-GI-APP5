@@ -291,32 +291,23 @@ class TextAn(TextAnCommon):
             text = text.split()
             self.taille_mots[auteur] = 0
 
-            for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
-                ngram_act = list(self.mots_auteurs[auteur].keys())[i]
-                ngram_next = list(self.mots_auteurs[auteur].keys())[i + 1]
-                prefix_temp = ngram_act[0] + "::" + ngram_act[1]
-                suffix = []
+            for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
+                suffix = (text[k+self.ngram])
 
                 if self.ngram == 1:
                     ngrams = (text[k])
                 else:
                     ngrams = tuple(text[k:k + self.ngram])
 
+                # nngrams = hash(ngrams)
+
                 if ngrams not in prefix:
-                    prefix[ngrams] = 1
-                    self.taille_mots[auteur] += 1
+                    prefix[ngrams] = {}
+
+                if suffix not in prefix[ngrams]:
+                    prefix[ngrams][suffix] = 1
                 else:
-                    self.mots_auteurs[auteur][ngrams] += 1
-
-        for i in range(len(self.mots_auteurs[auteur])):
-            # On met le ngram
-
-            if ngram_act not in prefix:
-                prefix[prefix_temp] = suffix
-                prefix[prefix_temp].append(ngram_next[1])
-
-            else:
-                prefix[prefix_temp].append(ngram_next[1])
+                    prefix[ngrams][suffix] += 1
 
         print("ALLO")
         # Ce print ne sert qu'à éliminer un avertissement. Il doit être retiré lorsque le code est complété
