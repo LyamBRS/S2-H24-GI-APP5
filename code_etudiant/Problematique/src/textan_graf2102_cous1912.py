@@ -258,7 +258,6 @@ class TextAn(TextAnCommon):
                     return
 
                 text = self.uniformizer(text)
-                self.taille_mots[auteur] = 0
 
                 # Parcourir le text par groupe de n grammes un mot a la fois.
                 for k in range(0, len(text) - self.ngram - 1):  # passe a travers le texte avec le n-gram
@@ -339,7 +338,6 @@ class TextAn(TextAnCommon):
                 return
 
             text = self.uniformizer(text)
-            self.taille_mots[auteur] = 0
 
             for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
                 suffix = (text[k+self.ngram])
