@@ -134,7 +134,8 @@ class TextAn(TextAnCommon):
         return norm
 
     def dot_product_aut(self, auteur1: str, auteur2: str) -> float:
-        """Calcule le produit scalaire normalisé entre les oeuvres de deux auteurs, en utilisant dot_product_dict()
+        """
+            Calcule le produit scalaire normalisé entre les oeuvres de deux auteurs, en utilisant dot_product_dict()
 
         Args :
             auteur1 (str) : le nom du premier auteur
@@ -145,15 +146,15 @@ class TextAn(TextAnCommon):
 
         Copyright 2023, F. Mailhot et Université de Sherbrooke
         """
-
-        # Les lignes qui suivent ne servent qu'à éliminer un avertissement.
-        # Il faut les retirer et les remplacer par du code fonctionnel
-
+        # Obviously, si les deux auteurs c'est pareil, on peak a 1. N'importe quoi d'autre vas etre en-dessous / proche de.
         if auteur1 == auteur2:
             return 1
 
-        dot_product = self.dot_product_dict(self.mots_auteurs[auteur1], self.mots_auteurs[auteur2],
-                                            self.taille_mots[auteur1], self.taille_mots[auteur2])
+        # Les tailles de mots sont pas necessaire dans nos calcules, mais inclues ici pour futur proof
+        dot_product = self.dot_product_dict(self.mots_auteurs[auteur1],
+                                            self.mots_auteurs[auteur2],
+                                            self.taille_mots[auteur1],
+                                            self.taille_mots[auteur2])
 
         return dot_product
 
