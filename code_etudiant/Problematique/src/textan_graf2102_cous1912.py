@@ -171,10 +171,6 @@ class TextAn(TextAnCommon):
 
         Copyright 2023, F. Mailhot et Université de Sherbrooke
         """
-
-        # Les lignes qui suivent ne servent qu'à éliminer un avertissement.
-        # Il faut les retirer et les remplacer par du code fonctionnel
-
         dot_product = TextAn.dot_product_dict(self.mots_auteurs[auteur], dict_oeuvre, self.taille_mots[auteur],
                                             len(dict_oeuvre))
         return dot_product
