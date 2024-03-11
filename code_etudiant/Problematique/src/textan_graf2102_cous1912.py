@@ -176,7 +176,8 @@ class TextAn(TextAnCommon):
         return dot_product
 
     def find_author(self, oeuvre: str) -> []:
-        """Après analyse des textes d'auteurs connus, retourner la liste d'auteurs
+        """
+            Après analyse des textes d'auteurs connus, la fonction retourne la liste d'auteurs
             et le niveau de proximité (un nombre entre 0 et 1) de l'oeuvre inconnue
             avec les écrits de chacun d'entre eux
 
