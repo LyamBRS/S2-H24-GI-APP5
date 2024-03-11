@@ -110,10 +110,12 @@ class TextAn(TextAnCommon):
         return prod_scal
 
     @staticmethod
-    def dot_product_dict(
-            dict1: dict, dict2: dict, dict1_size: int, dict2_size: int
-    ) -> float:
-        """Calcule le produit scalaire NORMALISÉ de deux vecteurs représentés par des dictionnaires
+    def dot_product_dict(dict1: dict, dict2: dict, dict1_size: int, dict2_size: int) -> float:
+        """
+            Calcule le produit scalaire NORMALISÉ de deux vecteurs représentés par des dictionnaires.
+            C`est fait en calculant premierement le produit scalaire des deux dictionnaires.
+            Apres, cette valeure est divise par la racine carree du produit scalaire du vecteur 1, multiplie
+            avec la racine carre du produit scalaire du deuxieme vecteur avec lui meme.
 
         Args :
             dict1 (dict) : le premier vecteur
@@ -124,15 +126,6 @@ class TextAn(TextAnCommon):
 
         Copyright 2023, F. Mailhot et Université de Sherbrooke
         """
-
-        # Les lignes qui suivent ne servent qu'à éliminer un avertissement.
-        # Il faut les retirer et les remplacer par du code fonctionnel
-        dot_product = 0
-
-        # common_keys = set(dict1.keys()) & set(dict2.keys())
-        #
-        # for ngram in common_keys:
-        #     dot_product += dict1[ngram] * dict2[ngram]
 
         dot_product = TextAn.scalar_product(dict1, dict2)
 
