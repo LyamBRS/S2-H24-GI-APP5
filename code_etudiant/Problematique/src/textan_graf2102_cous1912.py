@@ -81,14 +81,17 @@ class TextAn(TextAnCommon):
     def scalar_product(vector1: dict, vector2: dict) -> int:
         """
             Méthode calculant le produit scalaire entre 2 vecteurs :
-
+            Les vecteurs sont d`abord mis en ordre de grandeurs.
+            Apres, le produit scalaire est fait en additionnant la multiplication
+            de la value du vecteur 1 avec celle du vecteur 2, uniquement si la key
+            est presente dans les deux repo, sinon ca donnerait 0.
         Args :
             vector1 (dict) : tableau de hachage contenant tous les ngrammes du premier fichier
             vector2 (dict) : tableau de hachage contenant tous les ngrammes du deuxième fichier
 
         Returns :
             prod_scal (int) : Produit scalaire entre les deux vecteurs
-        """s
+        """
         # Il faut utiliser le plus petit vecteur a la bonne place, sinon produit matricielle impossible.
         if len(vector1) < len(vector2):
             v1 = vector1
