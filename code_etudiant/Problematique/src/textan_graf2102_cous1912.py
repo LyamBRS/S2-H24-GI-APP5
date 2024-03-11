@@ -306,14 +306,6 @@ class TextAn(TextAnCommon):
             finalized_text = finalized_text + word + " "
         #print(finalized_text)
 
-        # Remove spaces before ponctuations.
-        for ponctuation in self.PONC:
-            # The space after "--" needs to be removed, not before. Opposite for everything else.
-            if(ponctuation != "--"):
-                finalized_text.replace(" "+ponctuation, ponctuation)
-            else:
-                finalized_text.replace(ponctuation+" ", ponctuation)
-
         # Write that to a file with the specified name.
         try:
             with open(textname, 'w', encoding='utf-8') as file:
@@ -348,6 +340,7 @@ class TextAn(TextAnCommon):
 
             text = self.uniformizer(text)
 
+
             for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
                 suffix = (text[k+self.ngram])
                 ngrams = tuple(text[k:k + self.ngram])
@@ -380,14 +373,6 @@ class TextAn(TextAnCommon):
         for word in generated_text:
             finalized_text = finalized_text + word + " "
         #print(finalized_text)
-
-        # Remove spaces before ponctuations.
-        for ponctuation in self.PONC:
-            # The space after "--" needs to be removed, not before. Opposite for everything else.
-            if(ponctuation != "--"):
-                finalized_text.replace(" "+ponctuation, ponctuation)
-            else:
-                finalized_text.replace(ponctuation+" ", ponctuation)
 
         try:
             with open(textname, 'w', encoding='utf-8') as file:
@@ -481,6 +466,11 @@ class TextAn(TextAnCommon):
                 text = text.replace(char, ' ' + char + ' ')
 
         text = text.split()
+
+        # Removing useless spaces where ponctuations is found
+        for word_index in range(0, len(text)):
+            text[word_index].rstrip()
+
 
         # NORMALIZING: Removing words of specified length
         if self.remove_word_2 or self.remove_word_1:
