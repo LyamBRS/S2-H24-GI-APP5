@@ -231,7 +231,8 @@ class TextAn(TextAnCommon):
     def gen_text_all(self, taille: int, textname: str) -> None:
         """
             Après analyse des textes d'auteurs connus, produire un texte selon des statistiques de l'ensemble des auteurs
-
+            On retrouve une similarite avec analyse, laquel aurait pu etre separer dans des fonctions
+            respectifs. Mais bon, flemme et soucis de "ease of reading and understanding".
         Args :
             taille (int) : Taille du texte à générer
             textname (str) : Nom du fichier texte à générer.
@@ -475,7 +476,14 @@ class TextAn(TextAnCommon):
         return text
 
     def analyze(self) -> None:
-        """Fait l'analyse des textes fournis, en traitant chaque oeuvre de chaque auteur
+        """
+            Fait l'analyse des textes fournis, en traitant chaque oeuvre de chaque auteur
+            - Parcours tout les texts de tous les auteurs
+            - Chaque text est ouverts.
+            - Le text est ensuite uniformiser avec _ref_ uniformizer
+            - Par la suite, le text est parcourus 1 mot a la fois, en shiftant un ngramme a travers le tableau de mots
+            - Le ngramme est par la suite utilise comme hashage dans un dictionnaire pour calculer le nombre
+              de reoccurance de ce ngramme specifique la.
 
         Args :
             void : toute l'information est contenue dans l'objet TextAn
@@ -483,33 +491,9 @@ class TextAn(TextAnCommon):
         Returns :
             void : ne retourne rien, toute l'information extraite est conservée dans des structures internes
         """
-
-        # Ajouter votre code ici pour traiter l'ensemble des oeuvres de l'ensemble des auteurs
-        # Pour l'analyse :  faire le calcul des fréquences de n-grammes pour l'ensemble des oeuvres
-        #   d'un certain auteur, sans distinction des oeuvres individuelles,
-        #       et recommencer ce calcul pour chacun des auteurs
-        #   En procédant ainsi, les oeuvres comprenant plus de mots auront un impact plus grand sur
-        #   les statistiques globales d'un auteur.
-        # Il serait possible de considérer chacune des oeuvres d'un auteur comme ayant un poids identique.
-        #   Pour ce faire, il faudrait faire les calculs de fréquence pour chacune des oeuvres
-        #       de façon indépendante, pour ensuite les normaliser (diviser chaque vecteur par sa norme),
-        #       avant de les additionner pour obtenir le vecteur complet d'un auteur
-        #   De cette façon, les mots d'un court poème auraient une importance beaucoup plus grande que
-        #   les mots d'une très longue oeuvre du même auteur. Ce n'est PAS ce qui vous est demandé ici.
-
-        # Ces trois lignes ne servent qu'à éliminer un avertissement. Il faut les retirer lorsque le code est complété
-
-        # faut passer a travers tous les auteurs
-
-        # faut ouvrir tous les documents des auteurs
-
-        # lire tous les documents des auteurs
-
-        # faire les n-grames
-
-        # Get all authors and analyse their respective texts
+        print(f"ANALYSE DES TEXTS:")
         for auteur in self.auteurs:
-            print(f"Analyse de l'auteur: {auteur}...")
+            print(f"\tAnalyse de l'auteur: {auteur}...")
 
             # Analyses each texts available for that author
             for fileName in self.get_aut_files(auteur):
@@ -527,14 +511,13 @@ class TextAn(TextAnCommon):
                 text = self.uniformizer(text)
                 self.taille_mots[auteur] = 0
 
-                print(f"\tAnalyse du text de {len(text)} mots: {os.path.basename(fileName)}...")
+                print(f"\t\tAnalyse du text de {len(text)} mots: {os.path.basename(fileName)}...")
 
                 for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
                     if self.ngram == 1:
                         ngrams = (text[k])
                     else:
                         ngrams = tuple(text[k:k + self.ngram])
-
 
                     if ngrams not in self.mots_auteurs[auteur]:
                         self.mots_auteurs[auteur][ngrams] = 1
