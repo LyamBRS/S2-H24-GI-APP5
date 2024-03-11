@@ -338,12 +338,7 @@ class TextAn(TextAnCommon):
                 print("File: " + fileName + " n'existe pas")
                 return
 
-            text = text.lower()
-            if not self.keep_ponc:
-                for char in self.PONC:
-                    text = text.replace(char, ' ')
-
-            text = text.split()
+            text = self.uniformizer(text)
             self.taille_mots[auteur] = 0
 
             for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
