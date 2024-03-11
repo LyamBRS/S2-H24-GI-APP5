@@ -23,6 +23,7 @@
 """
 import math
 import os
+import random
 
 from textan_common import TextAnCommon
 
@@ -49,7 +50,7 @@ class TextAn(TextAnCommon):
     """
 
     # Signes de ponctuation à retirer (compléter cette liste incomplète)
-    PONC = ["!", ".", "[", "]", "(", ")", ",", "?", "--", "...", ]
+    PONC = ["!", ".", "[", "]", "(", ")", ",", "?", "--", "...", ";"]
 
     def __init__(self) -> None:
         """Initialize l'objet de type TextAn lorsqu'il est créé
@@ -254,11 +255,72 @@ class TextAn(TextAnCommon):
         Returns :
             void : ne retourne rien, le texte produit doit être écrit dans le fichier "textname"
         """
+        prefix = {}
+        for auteur in self.auteurs:
+            for fileName in self.get_aut_files(auteur):
+                text = ""
+                try:
+                    file = open(fileName, 'r', encoding='utf-8')
+                    text = file.read()
+                    file.close()
 
-        # Ce print ne sert qu'à éliminer un avertissement. Il doit être retiré lorsque le code est complété
-        print(self.auteurs, taille, textname)
+                except FileNotFoundError:
+                    print("File: " + fileName + " n'existe pas")
 
+                text = text.lower()
+                if not self.keep_ponc:
+                    for char in self.PONC:
+                        text = text.replace(char, ' ')
+
+                text = text.split()
+                self.taille_mots[auteur] = 0
+
+                for k in range(0, len(text) - self.ngram - 1):  # passe a travers le texte avec le n-gram
+                    suffix = (text[k + self.ngram])
+
+                    if self.ngram == 1:
+                        ngrams = (text[k])
+                    else:
+                        ngrams = tuple(text[k:k + self.ngram])
+
+                    # nngrams = hash(ngrams)
+
+                    if ngrams not in prefix:
+                        prefix[ngrams] = {}
+
+                    if suffix not in prefix[ngrams]:
+                        prefix[ngrams][suffix] = 1
+                        # print(f"ngram: {ngrams}, suffix: {suffix}, prefix: {prefix[ngrams]}, suffix: {prefix[ngrams][suffix]}")
+                    else:
+                        prefix[ngrams][suffix] += 1
+
+        generated_text = []
+        current_ngram = random.choice(list(prefix.keys()))
+        for s in current_ngram:
+            generated_text.append(s)
+
+        # print(f"generated_text:{generated_text}")
+
+        for i in range(taille - self.ngram):
+            # print(f"i:{i}, i+self.ngram: {i+self.ngram}, generated_text: {generated_text}")
+            current_ngram = tuple(generated_text[i:i + self.ngram])
+            # print(f"current_ngram:{current_ngram}")
+            suffix = prefix[current_ngram]
+            # print(f"suffix:{suffix}")
+            populations = list(suffix.keys())
+            weights = list(suffix.values())
+            choice = random.choices(population=populations, weights=weights)[0]
+            # print(f"populations: {populations}, weights: {weights}")
+            # print(f"choice: {choice}")
+            generated_text.append(choice)
+
+        # Generate one string out of the parsed generated text
+        finalized_text: str = ""
+        for word in generated_text:
+            finalized_text = finalized_text + word + " "
+        print(finalized_text)
         return
+
 
     def gen_text_auteur(self, auteur: str, taille: int, textname: str) -> None:
         """Après analyse des textes d'auteurs connus, produire un texte selon des statistiques d'un auteur
@@ -306,13 +368,35 @@ class TextAn(TextAnCommon):
 
                 if suffix not in prefix[ngrams]:
                     prefix[ngrams][suffix] = 1
+                    #print(f"ngram: {ngrams}, suffix: {suffix}, prefix: {prefix[ngrams]}, suffix: {prefix[ngrams][suffix]}")
                 else:
                     prefix[ngrams][suffix] += 1
 
-        print("ALLO")
-        # Ce print ne sert qu'à éliminer un avertissement. Il doit être retiré lorsque le code est complété
-        print(self.auteurs, auteur, taille, textname)
+        generated_text = []
+        current_ngram = random.choice(list(prefix.keys()))
+        for s in current_ngram:
+            generated_text.append(s)
 
+        # print(f"generated_text:{generated_text}")
+
+        for i in range(taille-self.ngram):
+            # print(f"i:{i}, i+self.ngram: {i+self.ngram}, generated_text: {generated_text}")
+            current_ngram = tuple(generated_text[i:i+self.ngram])
+            # print(f"current_ngram:{current_ngram}")
+            suffix = prefix[current_ngram]
+            # print(f"suffix:{suffix}")
+            populations = list(suffix.keys())
+            weights = list(suffix.values())
+            choice = random.choices(population=populations, weights=weights)[0]
+            # print(f"populations: {populations}, weights: {weights}")
+            # print(f"choice: {choice}")
+            generated_text.append(choice)
+
+        # Generate one string out of the parsed generated text
+        finalized_text:str = ""
+        for word in generated_text:
+            finalized_text = finalized_text + word + " "
+        print(finalized_text)
         return
 
     def get_nth_element(self, auteur: str, n: int) -> [[str]]:
@@ -372,6 +456,27 @@ class TextAn(TextAnCommon):
         # Huh, thats weird... you selected the last possible n value I suppose.
         return liste_de_ngrammes[n]
 
+    def uniformizer(self, text:str) -> dict:
+        """
+
+        """
+        # FILE NORMALIZING
+        text = text.lower()
+        if not self.keep_ponc:
+            for char in self.PONC:
+                text = text.replace(char, ' ')
+
+        text = text.split()
+
+        # NORMALIZING: Removing words of specified length
+        if self.remove_word_2 or self.remove_word_1:
+            # Add the word at the index, for each word in the text, if that isnt 1 big or 2 big and we specified we dont want these
+            text = [word
+                    for word in text
+                    if not (((len(word) == 1) and self.remove_word_1) or ((len(word) == 2) and self.remove_word_2))
+                    ]
+        return text
+
     def analyze(self) -> None:
         """Fait l'analyse des textes fournis, en traitant chaque oeuvre de chaque auteur
 
@@ -422,31 +527,9 @@ class TextAn(TextAnCommon):
                 except FileNotFoundError:
                     print("\tFile: " + fileName + " n'existe pas")
 
-                # FILE NORMALIZING
-                text = text.lower()
-                if not self.keep_ponc:
-                    for char in self.PONC:
-                        text = text.replace(char, ' ')
-
-                text = text.split()
+                text = self.uniformizer(text)
                 self.taille_mots[auteur] = 0
-                new_text = text
 
-                if self.remove_word_1:
-                    new_text = [
-                        word
-                        for word in text
-                        if not (len(word) <= 1)
-                    ]
-                text = new_text
-
-                if self.remove_word_2:
-                    new_text = [
-                        word
-                        for word in text
-                        if not (len(word) <= 2)
-                    ]
-                text = new_text
                 print(f"\tAnalyse du text de {len(text)} mots: {os.path.basename(fileName)}...")
 
                 for k in range(0, len(text) - self.ngram):  # passe a travers le texte avec le n-gram
@@ -454,6 +537,7 @@ class TextAn(TextAnCommon):
                         ngrams = (text[k])
                     else:
                         ngrams = tuple(text[k:k + self.ngram])
+
 
                     if ngrams not in self.mots_auteurs[auteur]:
                         self.mots_auteurs[auteur][ngrams] = 1
