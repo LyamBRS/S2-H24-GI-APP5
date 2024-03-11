@@ -469,8 +469,7 @@ class TextAn(TextAnCommon):
 
         # Removing useless spaces where ponctuations is found
         for word_index in range(0, len(text)):
-            text[word_index].rstrip()
-
+            text[word_index].replace(' ', '')
 
         # NORMALIZING: Removing words of specified length
         if self.remove_word_2 or self.remove_word_1:
