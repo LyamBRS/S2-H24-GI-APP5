@@ -337,43 +337,49 @@ class TextAn(TextAnCommon):
         """
         # Les lignes suivantes ne servent qu'à éliminer un avertissement.
         # Il faut les retirer lorsque le code est complété
-        if auteur not in self.mots_auteurs:
-            print("L'auteur n'est pas")
-            return
 
+        liste_de_ngrammes = []
+        reoccurance_index = 0
+        nth_element = 0
+        old_element_reoccurance = 0
+
+        # INITIAL CHECKS. We be checking if the author exist
+        if auteur not in self.mots_auteurs:
+            print("L'auteur n'existe pas")
+            return [[]]
+
+        # Sort the array per amount of reoccurance
         sorted_list = sorted(self.mots_auteurs[auteur].items(), key=lambda item: item[1], reverse=True)
 
-        """
-        .items() permet de grouper les key av leurs valeurs et de les mettre en tuple 
-        ex: my_dict = {'a': 1, 'b': 2, 'c': 3}  --->>    dict_items([('a', 1), ('b', 2), ('c', 3)])
-
-        key=lambda item: item[1] permet d'indiquer qu'on veut trier en fonction des valeurs du ngram qui se situe à l'index 1
-        reverse = True indique qu"on veut un ordre décroissant
-        Bref, ça fait une liste partant du ngram le plus utilisé par l'auteur
-        """
-
+        # Now that the array is sorted by the amount of reocurrance of a ngram, we check if the wanted nth-element is within all range of available indexes
         index = n - 1
         if index > len(sorted_list):
             print(index, ">", len(sorted_list))
             return [[]]
 
-        nth_element = []
-        nth_element.append(sorted_list[index][0])
-        """
-        JE change cela : nb_element = sorted_list[index]  
-        POUR ça:  nb_element = sorted_list[index][1]   
-        """
-        nb_element = sorted_list[index][1]
-        compteur = 1
+        # Create the array of empty lists. Sure, useless. But eh, it is what it is
+        for element in sorted_list:
+            liste_de_ngrammes.append([])
 
-        while sorted_list[index - compteur][1] == nb_element:
-            nth_element.append(sorted_list[index - compteur][
-                                   0])  # verifie les elements avant n pr savoir si certains ont le mm nb d'apparition
-            compteur += 1
-        while sorted_list[index + compteur][1] == nb_element:
-            nth_element.append(sorted_list[index + compteur][0])
-            compteur += 1
-        return nth_element
+        # Add all the nth grams until we reach the index we're looking for. No point in continuing further.
+        while reoccurance_index < len(sorted_list):
+            current_reoccurance = sorted_list[reoccurance_index][1]
+
+            # Checks if the previous element equals the next element. If thats the case, the index does NOT increase and we have doublons of nth_elements.
+            if(old_element_reoccurance != current_reoccurance):
+                old_element_reoccurance = current_reoccurance
+                nth_element += 1
+
+            # Simply add the ngram at the end of the list. If the index didnt change, then itll still be the nth-element.
+            liste_de_ngrammes[nth_element].append(sorted_list[reoccurance_index][0])
+            reoccurance_index += 1
+
+            # Aight, we already past the wanted nth_element... dont bother continuing
+            if(nth_element > n):
+                return liste_de_ngrammes[n]
+
+        # Huh, thats weird... you selected the last possible n value I suppose.
+        return liste_de_ngrammes[n]
 
     def analyze(self) -> None:
         """Fait l'analyse des textes fournis, en traitant chaque oeuvre de chaque auteur
