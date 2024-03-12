@@ -290,19 +290,26 @@ class TextAn(TextAnCommon):
         # Le dernier ngramme dicte les suffixes a aller chercher.
         # La reoccurance de chaque suffix est ensuite mis dans un random pour donner le plus plausible
         # a ajouter a la fin du ngramme.
+
         for i in range(taille - self.ngram):
             current_ngram = tuple(generated_text[i:i + self.ngram])
-            suffix = prefix[current_ngram]
 
-            populations = list(suffix.keys())
-            weights = list(suffix.values())
-            choice = random.choices(population=populations, weights=weights)[0] #[0], c'est le text.
+            if current_ngram in prefix:
+                suffix = prefix[current_ngram]
 
-            generated_text.append(choice)
+                populations = list(suffix.keys())
+                weights = list(suffix.values())
+                choice = random.choices(population=populations, weights=weights) #[0], c'est le text.
+                generated_text.extend(choice)
+            else:
+                print("Une erreur est survenue lors de l'ecriture du texte")
+                break
 
         # Generate one string out of the parsed generated text, finally creating a readable text.
         finalized_text: str = ""
+        end_of_line = 0
         for word in generated_text:
+            end_of_line += 1
             if word in self.PONC:
                 if word != "--":
                     finalized_text = finalized_text[:-1]
@@ -311,6 +318,10 @@ class TextAn(TextAnCommon):
                     finalized_text = finalized_text + word
             else:
                 finalized_text = finalized_text + word + " "
+
+            if end_of_line % 12 == 0:
+                finalized_text = finalized_text + "\n"
+                end_of_line = 0
         #print(finalized_text)
 
         # Write that to a file with the specified name.
@@ -369,15 +380,22 @@ class TextAn(TextAnCommon):
 
         for i in range(taille-self.ngram):
             current_ngram = tuple(generated_text[i:i + self.ngram])
-            suffix = prefix[current_ngram]
-            populations = list(suffix.keys())
-            weights = list(suffix.values())
-            choice = random.choices(population=populations, weights=weights)[0]
-            generated_text.append(choice)
+
+            if current_ngram in prefix:
+                suffix = prefix[current_ngram]
+                populations = list(suffix.keys())
+                weights = list(suffix.values())
+                choice = random.choices(population=populations, weights=weights)[0]
+                generated_text.append(choice)
+            else:
+                print("Une erreur est survenue lors de l'ecriture du texte")
+                break
 
         # Generate one string out of the parsed generated text
         finalized_text: str = ""
+        end_of_line = 0
         for word in generated_text:
+            end_of_line += 1
             if word in self.PONC:
                 if word != "--":
                     finalized_text = finalized_text[:-1]
@@ -386,6 +404,10 @@ class TextAn(TextAnCommon):
                     finalized_text = finalized_text + word
             else:
                 finalized_text = finalized_text + word + " "
+
+            if end_of_line % 12 == 0:
+                finalized_text = finalized_text + "\n"
+                end_of_line = 0
         #print(finalized_text)
 
         try:
