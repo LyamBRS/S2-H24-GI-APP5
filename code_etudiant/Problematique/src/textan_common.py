@@ -197,4 +197,5 @@ class TextAnCommon:
         self.ngram = 1
         self.mots_auteurs = {}
         self.taille_mots = {}
+        self.prefix = {}
         return

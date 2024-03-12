@@ -344,35 +344,8 @@ class TextAn(TextAnCommon):
         Returns :
             void : ne retourne rien, le texte produit doit être écrit dans le fichier "textname"
         """
-        prefix = {}
-        for fileName in self.get_aut_files(auteur):
-            text = ""
-            try:
-                file = open(fileName, 'r', encoding='utf-8')
-                text = file.read()
-                file.close()
-
-            except FileNotFoundError:
-                print("File: " + fileName + " n'existe pas")
-                return
-
-            text = self.uniformizer(text)
-
-
-            for k in range(0, len(text) - self.ngram-1):  # passe a travers le texte avec le n-gram
-                suffix = (text[k+self.ngram])
-                ngrams = tuple(text[k:k + self.ngram])
-
-                if ngrams not in prefix:
-                    prefix[ngrams] = {}
-
-                if suffix not in prefix[ngrams]:
-                    prefix[ngrams][suffix] = 1
-                else:
-                    prefix[ngrams][suffix] += 1
-
         generated_text = []
-        current_ngram = random.choice(list(prefix.keys()))
+        current_ngram = random.choice(list(self.prefix.keys()))
         for s in current_ngram:
             generated_text.append(s)
 
@@ -381,8 +354,8 @@ class TextAn(TextAnCommon):
         for i in range(taille-self.ngram):
             current_ngram = tuple(generated_text[i:i + self.ngram])
 
-            if current_ngram in prefix:
-                suffix = prefix[current_ngram]
+            if current_ngram in self.prefix:
+                suffix = self.prefix[current_ngram]
                 populations = list(suffix.keys())
                 weights = list(suffix.values())
                 choice = random.choices(population=populations, weights=weights)[0]
@@ -459,7 +432,7 @@ class TextAn(TextAnCommon):
             current_reoccurance = sorted_list[reoccurance_index][1]
 
             # Checks if the previous element equals the next element. If thats the case, the index does NOT increase and we have doublons of nth_elements.
-            if(old_element_reoccurance != current_reoccurance):
+            if old_element_reoccurance != current_reoccurance:
                 old_element_reoccurance = current_reoccurance
                 nth_element += 1
 
@@ -468,7 +441,7 @@ class TextAn(TextAnCommon):
             reoccurance_index += 1
 
             # Aight, we already past the wanted nth_element... dont bother continuing
-            if(nth_element > n):
+            if nth_element > n:
                 return liste_de_ngrammes[n]
 
         # Huh, thats weird... you selected the last possible n value I suppose.
@@ -565,4 +538,16 @@ class TextAn(TextAnCommon):
                         self.taille_mots[auteur] += 1
                     else:
                         self.mots_auteurs[auteur][ngrams] += 1
+
+                    if k < len(text) - self.ngram - 1:
+                        suffix = (text[k + self.ngram])
+                        ngrams = tuple(text[k:k + self.ngram])
+
+                        if ngrams not in self.prefix:
+                            self.prefix[ngrams] = {}
+
+                        if suffix not in self.prefix[ngrams]:
+                            self.prefix[ngrams][suffix] = 1
+                        else:
+                            self.prefix[ngrams][suffix] += 1
         return
